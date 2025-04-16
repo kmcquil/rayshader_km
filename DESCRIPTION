@@ -1,4 +1,4 @@
-Package: rayshader_km
+Package: rayshader
 Type: Package
 Title: Create Maps and Visualize Data in 2D and 3D
 Version: 0.38.11
