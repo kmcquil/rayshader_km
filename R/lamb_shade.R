@@ -48,5 +48,6 @@ lamb_shade = function(heightmap, sunaltitude=45,  sunangle=315, zscale = 1, zero
   #  shadowmatrix[shadowmatrix < 0] = 0
   #}
   shadowmatrixremove = shadowmatrix[c(-1,-nrow(shadowmatrix)),c(-1,-ncol(shadowmatrix))]
-  return(t(shadowmatrixremove))
+  #return(t(shadowmatrixremove))
+  return("what da heeck")
 }
