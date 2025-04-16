@@ -43,10 +43,10 @@ lamb_shade = function(heightmap, sunaltitude=45,  sunangle=315, zscale = 1, zero
   heightmap = add_padding(heightmap)
   heightmap = t(flipud(heightmap)) / zscale;
   shadowmatrix = lambshade_cpp(heightmap = heightmap, rayvector = rayvector)
-  shadowmatrix = scales::rescale_max(shadowmatrix,c(0,1))
-  if(zero_negative) {
-    shadowmatrix[shadowmatrix < 0] = 0
-  }
+  #shadowmatrix = scales::rescale_max(shadowmatrix,c(0,1))
+  #if(zero_negative) {
+  #  shadowmatrix[shadowmatrix < 0] = 0
+  #}
   shadowmatrixremove = shadowmatrix[c(-1,-nrow(shadowmatrix)),c(-1,-ncol(shadowmatrix))]
   return(t(shadowmatrixremove))
 }
