@@ -87,35 +87,23 @@ ray_shade = function(heightmap, sunaltitude=45, sunangle=315, maxsearch=NULL, la
     cache_mask = cache_mask[c(-1,-nrow(cache_mask)),c(-1,-ncol(cache_mask))]
     shadowmatrix[shadowmatrix<0] = 0
     
-    if(lambert) {
-      #shadowmatrix = shadowmatrix * lamb_shade(originalheightmap, sunaltitude = mean(anglebreaks), 
-      #                                        sunangle = sunangle, zscale = zscale)
-      lambmatrix = lamb_shade(originalheightmap, sunaltitude = mean(anglebreaks), 
+    # KM: Update the code to return a separate matrix for ray trace shadow, lambert shadow, and the combination
+    lambmatrix = lamb_shade(originalheightmap, sunaltitude = mean(anglebreaks), 
                                               sunangle = sunangle, zscale = zscale)
-      shadowcombo = shadowmatrix * lambmatrix
+    shadowcombo = shadowmatrix * lambmatrix
 
-      fix = function(sc, m) {
-        if(!is.null(sc)) {
-          sc[cache_mask == 1] = m[cache_mask == 1]
-          m = matrix(sc, nrow=nrow(m), ncol=ncol(m))
-        }
-        return(m)
+    fix = function(sc, m) {
+      if(!is.null(sc)) {
+      sc[cache_mask == 1] = m[cache_mask == 1]
+      m = matrix(sc, nrow=nrow(m), ncol=ncol(m))
       }
-      lambmatrix = fix(shadow_cache, lambmatrix)
-      print("lambmatrix")
-      print(dim(lambmatrix))
-      shadowmatrix = fix(shadow_cache, shadowmatrix)
-      print(dim(shadowmatrix))
-      shadowcombo = fix(shadow_cache, shadowcombo)
-      print(dim(shadowcombo))
-      return(list(shadowcombo, shadowmatrix, lambmatrix))
+      return(m)
     }
+    lambmatrix = fix(shadow_cache, lambmatrix)
+    shadowmatrix = fix(shadow_cache, shadowmatrix)
+    shadowcombo = fix(shadow_cache, shadowcombo)
+    return(list(shadowcombo, shadowmatrix, lambmatrix))
 
-    if(!is.null(shadow_cache)) {
-      shadow_cache[cache_mask == 1] = shadowmatrix[cache_mask == 1]
-      shadowmatrix = matrix(shadow_cache,nrow=nrow(shadowmatrix),ncol=ncol(shadowmatrix))
-    }
-    return(shadowmatrix)
   } else {
     if(is.null(options("cores")[[1]])) {
       numbercores = parallel::detectCores()
@@ -158,36 +146,21 @@ ray_shade = function(heightmap, sunaltitude=45, sunangle=315, maxsearch=NULL, la
     shadowmatrix = shadowmatrix[c(-1,-nrow(shadowmatrix)),c(-1,-ncol(shadowmatrix))]
     cache_mask = cache_mask[c(-1,-nrow(cache_mask)),c(-1,-ncol(cache_mask))]
 
-    # Update here to output all three (ray tracing, lambert, ray tracing * lambert)
-    if(lambert) {
-      #shadowmatrix = shadowmatrix * lamb_shade(originalheightmap, sunaltitude = mean(anglebreaks), 
-      #                                        sunangle = sunangle, zscale = zscale)
-      lambmatrix = lamb_shade(originalheightmap, sunaltitude = mean(anglebreaks), 
+    # KM: Update the code to return a separate matrix for ray trace shadow, lambert shadow, and the combination
+    lambmatrix = lamb_shade(originalheightmap, sunaltitude = mean(anglebreaks), 
                                               sunangle = sunangle, zscale = zscale)
-      shadowcombo = shadowmatrix * lambmatrix
-
-      fix = function(sc, m) {
-        if(!is.null(sc)) {
-          sc[cache_mask == 1] = m[cache_mask == 1]
-          m = matrix(sc, nrow=nrow(m), ncol=ncol(m))
-        }
-        return(m)
+    shadowcombo = shadowmatrix * lambmatrix
+    fix = function(sc, m) {
+      if(!is.null(sc)) {
+      sc[cache_mask == 1] = m[cache_mask == 1]
+      m = matrix(sc, nrow=nrow(m), ncol=ncol(m))
       }
-      lambmatrix = fix(shadow_cache, lambmatrix)
-      print("lambmatrix")
-      print(dim(lambmatrix))
-      shadowmatrix = fix(shadow_cache, shadowmatrix)
-      print(dim(shadowmatrix))
-      shadowcombo = fix(shadow_cache, shadowcombo)
-      print(dim(shadowcombo))
-      return(list(shadowcombo, shadowmatrix, lambmatrix))
+      return(m)
     }
-
-    #if(!is.null(shadow_cache)) {
-    #  shadow_cache[cache_mask == 1] = shadowmatrix[cache_mask == 1]
-    #  shadowmatrix = matrix(shadow_cache,nrow=nrow(shadowmatrix),ncol=ncol(shadowmatrix))
-    #}
-    #return(shadowmatrix)
+    lambmatrix = fix(shadow_cache, lambmatrix)
+    shadowmatrix = fix(shadow_cache, shadowmatrix)
+    shadowcombo = fix(shadow_cache, shadowcombo)
+    return(list(shadowcombo, shadowmatrix, lambmatrix))
   }
 }
 globalVariables('i')
