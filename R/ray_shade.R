@@ -145,16 +145,16 @@ ray_shade = function(heightmap, sunaltitude=45, sunangle=315, maxsearch=NULL, la
                                               sunangle = sunangle, zscale = zscale)
       shadowcombo = shadowmatrix * lambmatrix
 
-      fix = function(sc) {
-        if(!is.null(sc, m)) {
+      fix = function(sc, m) {
+        if(!is.null(sc)) {
           sc[cache_mask == 1] = m[cache_mask == 1]
           m = matrix(sc, nrow=nrow(m), ncol=ncol(m))
         }
         return(m)
       }
-      lambmatrix = fix(lambmatrix)
-      shadowmatrix = fix(shadowmatrix)
-      shadowcombo = fix(shadowcombo)
+      lambmatrix = fix(shadow_cache, lambmatrix)
+      shadowmatrix = fix(shadow_cache, shadowmatrix)
+      shadowcombo = fix(shadow_cache, shadowcombo)
       return(list(shadowcombo, shadowmatrix, lambmatrix))
     }
 
