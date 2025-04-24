@@ -153,16 +153,20 @@ ray_shade = function(heightmap, sunaltitude=45, sunangle=315, maxsearch=NULL, la
         return(m)
       }
       lambmatrix = fix(shadow_cache, lambmatrix)
+      print("lambmatrix")
+      print(dim(lambmatrix))
       shadowmatrix = fix(shadow_cache, shadowmatrix)
+      print(dim(shadowmatrix))
       shadowcombo = fix(shadow_cache, shadowcombo)
+      print(dim(shadowcombo))
       return(list(shadowcombo, shadowmatrix, lambmatrix))
     }
 
-    if(!is.null(shadow_cache)) {
-      shadow_cache[cache_mask == 1] = shadowmatrix[cache_mask == 1]
-      shadowmatrix = matrix(shadow_cache,nrow=nrow(shadowmatrix),ncol=ncol(shadowmatrix))
-    }
-    return(shadowmatrix)
+    #if(!is.null(shadow_cache)) {
+    #  shadow_cache[cache_mask == 1] = shadowmatrix[cache_mask == 1]
+    #  shadowmatrix = matrix(shadow_cache,nrow=nrow(shadowmatrix),ncol=ncol(shadowmatrix))
+    #}
+    #return(shadowmatrix)
   }
 }
 globalVariables('i')
