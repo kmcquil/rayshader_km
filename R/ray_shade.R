@@ -136,10 +136,28 @@ ray_shade = function(heightmap, sunaltitude=45, sunangle=315, maxsearch=NULL, la
     shadowmatrix[shadowmatrix<0] = 0
     shadowmatrix = shadowmatrix[c(-1,-nrow(shadowmatrix)),c(-1,-ncol(shadowmatrix))]
     cache_mask = cache_mask[c(-1,-nrow(cache_mask)),c(-1,-ncol(cache_mask))]
+
+    # Update here to output all three (ray tracing, lambert, ray tracing * lambert)
     if(lambert) {
-      shadowmatrix = shadowmatrix * lamb_shade(originalheightmap, sunaltitude = mean(anglebreaks), 
+      #shadowmatrix = shadowmatrix * lamb_shade(originalheightmap, sunaltitude = mean(anglebreaks), 
+      #                                        sunangle = sunangle, zscale = zscale)
+      lambmatrix = lamb_shade(originalheightmap, sunaltitude = mean(anglebreaks), 
                                               sunangle = sunangle, zscale = zscale)
+      shadowcombo = shadowmatrix * lambmatrix
+
+      fix(sc){
+        if(!is.null(sc, m)) {
+          sc[cache_mask == 1] = m[cache_mask == 1]
+          m = matrix(sc, nrow=nrow(m), ncol=ncol(m))
+        }
+        return(m)
+      }
+      lambmatrix = fix(lambmatrix)
+      shadowmatrix = fix(shadowmatrix)
+      shadowcombo = fix(shadowcombo)
+      return(list(shadowcombo, shadowmatrix, lambmatrix))
     }
+
     if(!is.null(shadow_cache)) {
       shadow_cache[cache_mask == 1] = shadowmatrix[cache_mask == 1]
       shadowmatrix = matrix(shadow_cache,nrow=nrow(shadowmatrix),ncol=ncol(shadowmatrix))
